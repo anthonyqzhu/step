@@ -7,3 +7,53 @@
 #greeting-container {
   margin-top: 20px;
 }
+
+#quote-container {
+  margin-top: 20px;
+}
+
+.header {
+  padding: 60px;
+  text-align: center;
+  background: #1abc9c;
+  color: white;
+  font-size: 30px;
+}
+
+#img-link {
+   text-decoration: none;
+   border:0px;
+   outline:none;
+   border-width: 0px;
+   outline-width:0px;
+   border-bottom: none;
+}
+
+.sidebar {
+  height: 100%; 
+  width: 160px; 
+  position: fixed;
+  z-index: 1; 
+  top: 0; 
+  left: 0;
+  background-color: #111; 
+  overflow-x: hidden; 
+  padding-top: 20px;
+}
+
+.sidebar a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+#content {
+  margin-left: 160px; 
+  padding: 0px 10px;
+}
