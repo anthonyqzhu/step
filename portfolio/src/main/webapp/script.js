@@ -27,3 +27,18 @@ function addRandomQuote() {
   const quoteContainer = document.getElementById('quote-container');
   quoteContainer.innerText = quote;
 }
+
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var summary = this.nextElementSibling;
+        if (summary.style.maxHeight){
+        summary.style.maxHeight = null;
+        } else {
+        summary.style.maxHeight = summary.scrollHeight + "px";
+        } 
+    });
+}
