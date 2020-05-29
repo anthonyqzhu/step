@@ -8,10 +8,6 @@ body {
   width: 650px;
 }
 
-#greeting-container {
-  margin-top: 20px;
-}
-
 #quote-container {
   margin-top: 20px;
 }
@@ -24,13 +20,14 @@ body {
   font-size: 30px;
 }
 
-#img-link {
-   text-decoration: none;
-   border:0px;
-   outline:none;
-   border-width: 0px;
-   outline-width:0px;
-   border-bottom: none;
+.external-link-icon {
+    text-decoration: none;
+    border: 0px;
+}
+
+.external-link-icon img {
+   width: 32px;
+   height:32px;
 }
 
 .sidebar {
@@ -57,7 +54,7 @@ body {
   color: #f1f1f1;
 }
 
-#content {
-  margin-left: 160px; 
-  padding: 0px 10px;
+.movie-image img {
+    width: 188px;
+    height: 268px;
 }
