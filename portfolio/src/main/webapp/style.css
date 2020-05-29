@@ -80,6 +80,12 @@ div.gallery img {
     height: 268px;
 }
 
+div.col {
+    float: left;
+    width: 33.33%;
+    padding: none;
+}
+
 div.artist-profile {
     width: 188px;
     height: auto;
@@ -91,6 +97,5 @@ div.artist-profile img {
 }
 
 div.desc {
-    padding: 10px;
     text-align: center;
 }
