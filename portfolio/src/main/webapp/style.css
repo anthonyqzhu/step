@@ -103,7 +103,7 @@ div.desc {
 
 .collapsible {
   background-color: #8d9db6;
-  color: white;
+  color: black;
   cursor: pointer;
   padding: 18px;
   width: 100%;
@@ -136,4 +136,16 @@ div.desc {
 
 .active:after {
   content: "\1401";
+}
+
+.resume-button {
+  background-color: white;
+  color: black;
+  border: 2px solid #667292;
+  transition-duration: 0.4s;
+}
+
+.resume-button:hover {
+  background-color: #667292;
+  color: white;
 }
