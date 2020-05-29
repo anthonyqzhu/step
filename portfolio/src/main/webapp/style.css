@@ -74,3 +74,23 @@ div.gallery img {
     width: 188px;
     height: 268px;
 }
+
+.show-image img {
+    width: 188px;
+    height: 268px;
+}
+
+div.artist-profile {
+    width: 188px;
+    height: auto;
+}
+
+div.artist-profile img {
+    width: 100%;
+    height: auto;
+}
+
+div.desc {
+    padding: 10px;
+    text-align: center;
+}
