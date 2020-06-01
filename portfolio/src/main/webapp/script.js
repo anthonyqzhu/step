@@ -28,6 +28,15 @@ function addRandomQuote() {
   quoteContainer.innerText = quote;
 }
 
+/*
+ * Adds the data from /data to page
+ */
+function addGreetingFromData() {
+    fetch('/data').then(response => response.text()).then((greeting) => {
+        document.getElementById('greeting-container').innerHTML = greeting;
+    });
+}
+
 var coll = document.getElementsByClassName("collapsible");
 var i;
 
