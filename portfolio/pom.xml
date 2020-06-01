@@ -34,7 +34,7 @@
         <artifactId>appengine-maven-plugin</artifactId>
         <version>2.2.0</version>
         <configuration>
-          <deploy.projectId>google.com:aqzhu-step-2020</deploy.projectId>
+          <deploy.projectId>aqzhu-step-2020</deploy.projectId>
           <deploy.version>1</deploy.version>
         </configuration>
       </plugin>
