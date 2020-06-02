@@ -22,20 +22,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns comment data in JSON format */
+/** Servlet that returns comment data as a JSON list */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  static final ArrayList<String> comments = new ArrayList<String>();
+  // create constant list of comments to return
+  private static final ArrayList<String> comments = Arrays.asList("hello", "world", "so cool!");
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-    // add some hard coded values to comments list
-    comments.clear();
-    comments.add("hello");
-    comments.add("world");
-    comments.add("so cool!");
 
     // convert comments to json
     String json = convertToJsonUsingGson(comments);
