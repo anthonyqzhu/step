@@ -22,24 +22,25 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that returns comment data in JSON format */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  ArrayList<String> comments = new ArrayList<String>();
+  static final ArrayList<String> comments = new ArrayList<String>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-	//add some hard coded values to comments list
+    // add some hard coded values to comments list
+    comments.clear();
     comments.add("hello");
     comments.add("world");
     comments.add("so cool!");
 
-	//convert comments to json
-	String json = convertToJsonUsingGson(comments);
+    // convert comments to json
+    String json = convertToJsonUsingGson(comments);
 
-	//set response to comments in json form
+    // set response to comments in json form
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
@@ -47,9 +48,9 @@ public class DataServlet extends HttpServlet {
   /**
    * Converts an ArrayList instance into a JSON string using the Gson library.
    */
-  private String convertToJsonUsingGson(ArrayList list) {
+  private static String convertToJsonUsingGson(ArrayList<String> list) {
+
     Gson gson = new Gson();
-    String json = gson.toJson(list);
-    return json;
+    return gson.toJson(list);
   }
 }

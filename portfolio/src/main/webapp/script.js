@@ -28,18 +28,20 @@ function addRandomQuote() {
   quoteContainer.innerText = quote;
 }
 
+/**
+ * Add all comments to the page
+ */
 function addComments() {
     var response_json = fetch('/data').then(response => response.json());
     console.log(response_json);
     response_json.then((comments) => {
         const commentsListElement = document.getElementById('comments-container');
         commentsListElement.innerHTML = '';
-        commentsListElement.appendChild(
-            createListElement(comments[0]));
-        commentsListElement.appendChild(
-            createListElement(comments[1]));
-        commentsListElement.appendChild(
-            createListElement(comments[2]));
+        var i;
+        for (i = 0; i < comments.length; i++) {
+            commentsListElement.appendChild(
+                createListElement(comments[i]));
+        }
     });
 }
 
@@ -50,6 +52,9 @@ function createListElement(text) {
   return liElement;
 }
 
+/**
+ * Enables collapsibles to expand and close on click
+ */
 var coll = document.getElementsByClassName("collapsible");
 var i;
 
