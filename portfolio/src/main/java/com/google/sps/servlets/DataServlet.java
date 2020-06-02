@@ -28,13 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
 
   // create constant list of comments to return
-  private static final ArrayList<String> comments = new ArrayList<String>();
+  private static final ArrayList<String> commentsList = new ArrayList<String>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     // convert comments to json
-    String json = convertToJsonUsingGson(comments);
+    String json = convertToJsonUsingGson(commentsList);
 
     // set response to comments in json form
     response.setContentType("application/json;");
@@ -46,9 +46,8 @@ public class DataServlet extends HttpServlet {
 
     // Get the input from the form.
     String commentText = request.getParameter("comment-text");
-    
-    // Add comment to list
-    comments.add(commentText);
+
+    commentsList.add(commentText);
 
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");
