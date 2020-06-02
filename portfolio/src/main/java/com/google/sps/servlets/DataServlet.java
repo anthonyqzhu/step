@@ -27,16 +27,16 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  // create constant list of comments to return
+  // Create an ArrayList to store the comments 
   private static final ArrayList<String> commentsList = new ArrayList<String>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    // convert comments to json
+    // Convert comments to json
     String json = convertToJsonUsingGson(commentsList);
 
-    // set response to comments in json form
+    // Set response to comments in json form
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
