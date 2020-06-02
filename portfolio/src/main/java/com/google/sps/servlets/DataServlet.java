@@ -14,6 +14,7 @@
 
 package com.google.sps.servlets;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -27,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
 
   // create constant list of comments to return
-  private static final ArrayList<String> comments = Arrays.asList("hello", "world", "so cool!");
+  private static final ArrayList<String> comments = new ArrayList<String>(Arrays.asList("hello", "world", "so cool!"));
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
