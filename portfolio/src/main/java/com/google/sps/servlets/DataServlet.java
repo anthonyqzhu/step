@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
 
   // create constant list of comments to return
-  private static final ArrayList<String> comments = new ArrayList<String>(Arrays.asList("hello", "world", "so cool!"));
+  private static final ArrayList<String> comments = new ArrayList<String>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -39,6 +39,19 @@ public class DataServlet extends HttpServlet {
     // set response to comments in json form
     response.setContentType("application/json;");
     response.getWriter().println(json);
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+    // Get the input from the form.
+    String commentText = request.getParameter("comment-text");
+    
+    // Add comment to list
+    comments.add(commentText);
+
+    // Redirect back to the HTML page.
+    response.sendRedirect("/index.html");
   }
 
   /**
