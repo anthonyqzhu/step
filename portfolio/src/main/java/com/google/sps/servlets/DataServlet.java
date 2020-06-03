@@ -14,10 +14,13 @@
 
 package com.google.sps.servlets;
 
-import java.util.Arrays;
-import java.util.ArrayList;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +32,11 @@ public class DataServlet extends HttpServlet {
 
   // Create an ArrayList to store the comments 
   private static final ArrayList<String> commentsList = new ArrayList<String>();
+
+  private static final String COMMENT_FORM_PARAMETER = "comment-text";
+  private static final String COMMENT_KIND = "Comment";
+  private static final String TEXT_PROPERTY = "text";
+  private static final String TIMESTAMP_PROPERTY = "timestamp";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -44,10 +52,20 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    // Get the input from the form.
-    String commentText = request.getParameter("comment-text");
+    // Get the input from the form and log time of comment
+    String commentText = request.getParameter(COMMENT_FORM_PARAMETER);
+    long timestamp = System.currentTimeMillis();
 
     commentsList.add(commentText);
+
+    // Create entity with comment text and timestamp info
+    Entity taskEntity = new Entity(COMMENT_KIND);
+    taskEntity.setProperty(TEXT_PROPERTY, commentText);
+    taskEntity.setProperty(TIMESTAMP_PROPERTY, timestamp);
+
+    // Store comment task with datastore instance
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(taskEntity);
 
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");
