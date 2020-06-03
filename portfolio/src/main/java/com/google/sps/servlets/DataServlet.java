@@ -17,7 +17,11 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,53 +34,59 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  // Create an ArrayList to store the comments 
-  private static final ArrayList<String> commentsList = new ArrayList<String>();
-
+  // Constant parameters for datastore and request operations
   private static final String COMMENT_FORM_PARAMETER = "comment-text";
   private static final String COMMENT_KIND = "Comment";
   private static final String TEXT_PROPERTY = "text";
   private static final String TIMESTAMP_PROPERTY = "timestamp";
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Query query = new Query(COMMENT_KIND).addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
 
-    // Convert comments to json
-    String json = convertToJsonUsingGson(commentsList);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
 
-    // Set response to comments in json form
-    response.setContentType("application/json;");
-    response.getWriter().println(json);
-  }
+        // Create ArrayList of comments and populate from the database
+        ArrayList<String> commentsList = new ArrayList<String>();
+        for (Entity commentEntity : results.asIterable()) {
+            commentsList.add((String) commentEntity.getProperty(TEXT_PROPERTY));
+        }
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Convert comments to json
+        String json = convertToJsonUsingGson(commentsList);
 
-    // Get the input from the form and log time of comment
-    String commentText = request.getParameter(COMMENT_FORM_PARAMETER);
-    long timestamp = System.currentTimeMillis();
+        // Set response to comments in json form
+        response.setContentType("application/json;");
+        response.getWriter().println(json);
+    }
 
-    commentsList.add(commentText);
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    // Create entity with comment text and timestamp info
-    Entity taskEntity = new Entity(COMMENT_KIND);
-    taskEntity.setProperty(TEXT_PROPERTY, commentText);
-    taskEntity.setProperty(TIMESTAMP_PROPERTY, timestamp);
+        // Get the input from the form and log time of comment
+        String commentText = request.getParameter(COMMENT_FORM_PARAMETER);
+        long timestamp = System.currentTimeMillis();
 
-    // Store comment task with datastore instance
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(taskEntity);
+        // Create entity with comment text and timestamp info
+        Entity taskEntity = new Entity(COMMENT_KIND);
+        taskEntity.setProperty(TEXT_PROPERTY, commentText);
+        taskEntity.setProperty(TIMESTAMP_PROPERTY, timestamp);
 
-    // Redirect back to the HTML page.
-    response.sendRedirect("/index.html");
-  }
+        // Store comment task with datastore instance
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(taskEntity);
 
-  /**
-   * Converts an ArrayList instance into a JSON string using the Gson library.
-   */
-  private static String convertToJsonUsingGson(ArrayList<String> list) {
+        // Redirect back to the HTML page.
+        response.sendRedirect("/index.html");
+    }
 
-    Gson gson = new Gson();
-    return gson.toJson(list);
-  }
+    /**
+    * Converts an ArrayList instance into a JSON string using the Gson library.
+    */
+    private static String convertToJsonUsingGson(ArrayList<String> list) {
+
+        Gson gson = new Gson();
+        return gson.toJson(list);
+    }
 }
