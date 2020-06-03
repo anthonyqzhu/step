@@ -39,53 +39,53 @@ public class DataServlet extends HttpServlet {
   private static final String TEXT_PROPERTY = "text";
   private static final String TIMESTAMP_PROPERTY = "timestamp";
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query(COMMENT_KIND).addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Query query = new Query(COMMENT_KIND).addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    PreparedQuery results = datastore.prepare(query);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
 
-    // Create ArrayList of comments and populate from the database
-    ArrayList<String> commentsList = new ArrayList<String>();
-    for (Entity commentEntity : results.asIterable()) {
-        commentsList.add((String) commentEntity.getProperty(TEXT_PROPERTY));
+        // Create ArrayList of comments and populate from the database
+        ArrayList<String> commentsList = new ArrayList<String>();
+        for (Entity commentEntity : results.asIterable()) {
+            commentsList.add((String) commentEntity.getProperty(TEXT_PROPERTY));
+        }
+
+        // Convert comments to json
+        String json = convertToJsonUsingGson(commentsList);
+
+        // Set response to comments in json form
+        response.setContentType("application/json;");
+        response.getWriter().println(json);
     }
 
-    // Convert comments to json
-    String json = convertToJsonUsingGson(commentsList);
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    // Set response to comments in json form
-    response.setContentType("application/json;");
-    response.getWriter().println(json);
-  }
+        // Get the input from the form and log time of comment
+        String commentText = request.getParameter(COMMENT_FORM_PARAMETER);
+        long timestamp = System.currentTimeMillis();
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // Create entity with comment text and timestamp info
+        Entity taskEntity = new Entity(COMMENT_KIND);
+        taskEntity.setProperty(TEXT_PROPERTY, commentText);
+        taskEntity.setProperty(TIMESTAMP_PROPERTY, timestamp);
 
-    // Get the input from the form and log time of comment
-    String commentText = request.getParameter(COMMENT_FORM_PARAMETER);
-    long timestamp = System.currentTimeMillis();
+        // Store comment task with datastore instance
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(taskEntity);
 
-    // Create entity with comment text and timestamp info
-    Entity taskEntity = new Entity(COMMENT_KIND);
-    taskEntity.setProperty(TEXT_PROPERTY, commentText);
-    taskEntity.setProperty(TIMESTAMP_PROPERTY, timestamp);
+        // Redirect back to the HTML page.
+        response.sendRedirect("/index.html");
+    }
 
-    // Store comment task with datastore instance
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(taskEntity);
+    /**
+    * Converts an ArrayList instance into a JSON string using the Gson library.
+    */
+    private static String convertToJsonUsingGson(ArrayList<String> list) {
 
-    // Redirect back to the HTML page.
-    response.sendRedirect("/index.html");
-  }
-
-  /**
-   * Converts an ArrayList instance into a JSON string using the Gson library.
-   */
-  private static String convertToJsonUsingGson(ArrayList<String> list) {
-
-    Gson gson = new Gson();
-    return gson.toJson(list);
-  }
+        Gson gson = new Gson();
+        return gson.toJson(list);
+    }
 }
