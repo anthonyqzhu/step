@@ -33,9 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
-  // Create an ArrayList to store the comments 
-  private static final ArrayList<String> commentsList = new ArrayList<String>();
-
+  // Constant parameters for datastore and request operations
   private static final String COMMENT_FORM_PARAMETER = "comment-text";
   private static final String COMMENT_KIND = "Comment";
   private static final String TEXT_PROPERTY = "text";
@@ -43,6 +41,16 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    // Create ArrayList of comments and populate from the database
+    ArrayList<String> commentsList = new ArrayList<String>();
+    for (Entity commentEntity : results.asIterable()) {
+        commentsList.add((String) commentEntity.getProperty("text"));
+    }
 
     // Convert comments to json
     String json = convertToJsonUsingGson(commentsList);
@@ -58,8 +66,6 @@ public class DataServlet extends HttpServlet {
     // Get the input from the form and log time of comment
     String commentText = request.getParameter(COMMENT_FORM_PARAMETER);
     long timestamp = System.currentTimeMillis();
-
-    commentsList.add(commentText);
 
     // Create entity with comment text and timestamp info
     Entity taskEntity = new Entity(COMMENT_KIND);
