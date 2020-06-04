@@ -21,10 +21,10 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
-import java.util.ArrayList;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +39,7 @@ public class DataServlet extends HttpServlet {
   private static final String COMMENT_KIND = "Comment";
   private static final String TEXT_PROPERTY = "text";
   private static final String TIMESTAMP_PROPERTY = "timestamp";
+  private static final String NUM_COMMENTS_PARAMETER = "num_comments";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -49,8 +50,12 @@ public class DataServlet extends HttpServlet {
 
         // Create ArrayList of comments and populate from the database
         ArrayList<String> commentsList = new ArrayList<String>();
-        for (Entity commentEntity : results.asIterable()) {
-            commentsList.add((String) commentEntity.getProperty(TEXT_PROPERTY));
+        Iterator resultIterator = results.asIterable().iterator();
+        for (int i = 0; i < Integer.parseInt(request.getParameter(NUM_COMMENTS_PARAMETER)); i++) {
+            if(resultIterator.hasNext()) {
+                Entity commentEntity = (Entity) resultIterator.next();
+                commentsList.add((String) commentEntity.getProperty(TEXT_PROPERTY));
+            }
         }
 
         // Convert comments to json
