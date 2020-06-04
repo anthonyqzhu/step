@@ -32,7 +32,7 @@ function addRandomQuote() {
  * Add all comments to the page
  */
 function addComments() {
-    var response_json = fetch('/data').then(response => response.json());
+    var response_json = fetch('/data?num_comments=2').then(response => response.json());
     console.log(response_json);
     response_json.then((comments) => {
         const commentsListElement = document.getElementById('comments-container');
