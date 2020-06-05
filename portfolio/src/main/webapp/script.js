@@ -32,7 +32,9 @@ function addRandomQuote() {
  * Add all comments to the page
  */
 function addComments() {
+    
     var response_json = fetch('/data?num_comments=' + document.getElementById("num_comments_field").value).then(response => response.json());
+    console.log("Displaying comments");
     console.log(response_json);
     response_json.then((comments) => {
         const commentsListElement = document.getElementById('comments-container');
@@ -43,6 +45,14 @@ function addComments() {
                 createListElement(comments[i]));
         }
     });
+}
+
+/**
+ * Delete all comments from the database
+ */
+function deleteComments() {
+    console.log("Deleting comments");
+    fetch(new Request('/delete-data', {method: 'POST'})).then(addComments());
 }
 
 /** Creates an <li> element containing text. */

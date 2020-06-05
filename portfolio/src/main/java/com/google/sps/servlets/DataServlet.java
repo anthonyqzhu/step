@@ -54,7 +54,12 @@ public class DataServlet extends HttpServlet {
         for (int i = 0; i < Integer.parseInt(request.getParameter(NUM_COMMENTS_PARAMETER)); i++) {
             if(resultIterator.hasNext()) {
                 Entity commentEntity = (Entity) resultIterator.next();
-                commentsList.add((String) commentEntity.getProperty(TEXT_PROPERTY));
+                try {
+                    commentEntity = datastore.get(commentEntity.getKey());
+                    commentsList.add((String) commentEntity.getProperty(TEXT_PROPERTY));
+                } catch (Exception e) {
+                    System.out.println("Entity not found");
+                }
             }
         }
 
