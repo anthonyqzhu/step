@@ -60,16 +60,20 @@ public class DataServlet extends HttpServlet {
         // Create ArrayList of comments and populate from the database
         ArrayList<Comment> commentsList = new ArrayList<Comment>();
         Iterator resultIterator = results.asIterable().iterator();
-        for (int i = 0; i < Integer.parseInt(request.getParameter(NUM_COMMENTS_PARAMETER)); i++) {
-            if(resultIterator.hasNext()) {
-                Entity commentEntity = (Entity) resultIterator.next();
-                String text = (String) commentEntity.getProperty(TEXT_PROPERTY);
-                long timestamp = (long) commentEntity.getProperty(TIMESTAMP_PROPERTY);
-                    
-                Comment comment = new Comment(text, timestamp);
-                commentsList.add(comment);
-                System.out.println("Item fetched" + System.currentTimeMillis());
+        int numComments = Integer.parseInt(request.getParameter(NUM_COMMENTS_PARAMETER));
+        if(numComments >= 0 ) {
+            for (int i = 0; i < numComments; i++) {
+                if(resultIterator.hasNext()) {
+                    Entity commentEntity = (Entity) resultIterator.next();
+                    String text = (String) commentEntity.getProperty(TEXT_PROPERTY);
+                    long timestamp = (long) commentEntity.getProperty(TIMESTAMP_PROPERTY);
+                        
+                    Comment comment = new Comment(text, timestamp);
+                    commentsList.add(comment);
+                }
             }
+        } else {
+            System.out.println("Invalid number. Please enter a non negative amount");
         }
 
         // Convert comments to json

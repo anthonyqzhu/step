@@ -29,9 +29,9 @@ function addRandomQuote() {
 }
 
 /**
- * Add all comments to the page
+ * Fetch all comments and display them on the page
  */
-function addComments() {
+function fetchComments() {
     
     var response_json = fetch('/data?num_comments=' + document.getElementById("num_comments_field").value).then(response => response.json());
     console.log("Displaying comments");
