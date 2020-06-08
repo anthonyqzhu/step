@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import com.google.sps.data.Comment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,14 +50,18 @@ public class DataServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query);
 
         // Create ArrayList of comments and populate from the database
-        ArrayList<String> commentsList = new ArrayList<String>();
+        ArrayList<Comment> commentsList = new ArrayList<Comment>();
         Iterator resultIterator = results.asIterable().iterator();
         for (int i = 0; i < Integer.parseInt(request.getParameter(NUM_COMMENTS_PARAMETER)); i++) {
             if(resultIterator.hasNext()) {
                 Entity commentEntity = (Entity) resultIterator.next();
                 try {
                     commentEntity = datastore.get(commentEntity.getKey());
-                    commentsList.add((String) commentEntity.getProperty(TEXT_PROPERTY));
+                    String text = (String) commentEntity.getProperty(TEXT_PROPERTY);
+                    long timestamp = (long) commentEntity.getProperty(TIMESTAMP_PROPERTY);
+                    
+                    Comment comment = new Comment(text, timestamp);
+                    commentsList.add(comment);
                 } catch (Exception e) {
                     System.out.println("Entity not found");
                 }
@@ -79,13 +84,13 @@ public class DataServlet extends HttpServlet {
         long timestamp = System.currentTimeMillis();
 
         // Create entity with comment text and timestamp info
-        Entity taskEntity = new Entity(COMMENT_KIND);
-        taskEntity.setProperty(TEXT_PROPERTY, commentText);
-        taskEntity.setProperty(TIMESTAMP_PROPERTY, timestamp);
+        Entity commentEntity = new Entity(COMMENT_KIND);
+        commentEntity.setProperty(TEXT_PROPERTY, commentText);
+        commentEntity.setProperty(TIMESTAMP_PROPERTY, timestamp);
 
         // Store comment task with datastore instance
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(taskEntity);
+        datastore.put(commentEntity);
 
         // Redirect back to the HTML page.
         response.sendRedirect("/index.html");
@@ -94,7 +99,7 @@ public class DataServlet extends HttpServlet {
     /**
     * Converts an ArrayList instance into a JSON string using the Gson library.
     */
-    private static String convertToJsonUsingGson(ArrayList<String> list) {
+    private static String convertToJsonUsingGson(ArrayList<Comment> list) {
 
         Gson gson = new Gson();
         return gson.toJson(list);
