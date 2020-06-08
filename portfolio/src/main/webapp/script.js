@@ -42,7 +42,7 @@ function addComments() {
         var i;
         for (i = 0; i < comments.length; i++) {
             commentsListElement.appendChild(
-                createListElement(comments[i]));
+                createListElement(comments[i].text));
         }
     });
 }
@@ -52,7 +52,10 @@ function addComments() {
  */
 function deleteComments() {
     console.log("Deleting comments");
-    fetch(new Request('/delete-data', {method: 'POST'})).then(addComments());
+    fetch(new Request('/delete-data', {method: 'POST'})).then(() => {
+        const commentsListElement = document.getElementById('comments-container');
+        commentsListElement.innerHTML = '';
+    });
 }
 
 /** Creates an <li> element containing text. */
