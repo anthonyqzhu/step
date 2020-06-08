@@ -15,11 +15,13 @@
 package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceConfig;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.ReadPolicy;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.io.IOException;
@@ -46,7 +48,13 @@ public class DataServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Query query = new Query(COMMENT_KIND).addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        // Construct a read policy for eventual consistency
+        ReadPolicy policy = new ReadPolicy(ReadPolicy.Consistency.STRONG);
+
+        // Set the read policy
+        DatastoreServiceConfig strongConsistentConfig =
+            DatastoreServiceConfig.Builder.withReadPolicy(policy);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService(strongConsistentConfig);
         PreparedQuery results = datastore.prepare(query);
 
         // Create ArrayList of comments and populate from the database
@@ -62,6 +70,7 @@ public class DataServlet extends HttpServlet {
                     
                     Comment comment = new Comment(text, timestamp);
                     commentsList.add(comment);
+                    System.out.println("Item fetched" + System.currentTimeMillis());
                 } catch (Exception e) {
                     System.out.println("Entity not found");
                 }
@@ -70,6 +79,8 @@ public class DataServlet extends HttpServlet {
 
         // Convert comments to json
         String json = convertToJsonUsingGson(commentsList);
+
+        System.out.println(json);
 
         // Set response to comments in json form
         response.setContentType("application/json;");

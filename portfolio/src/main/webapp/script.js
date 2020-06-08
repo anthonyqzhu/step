@@ -52,9 +52,9 @@ function addComments() {
  */
 function deleteComments() {
     console.log("Deleting comments");
-    fetch(new Request('/delete-data', {method: 'POST'})).then(() => {
-        const commentsListElement = document.getElementById('comments-container');
-        commentsListElement.innerHTML = '';
+    const promise = fetch(new Request('/delete-data', {method: 'POST'}));
+    promise.then(() => {
+        addComments();
     });
 }
 
