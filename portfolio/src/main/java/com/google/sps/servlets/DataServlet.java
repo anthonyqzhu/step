@@ -63,17 +63,12 @@ public class DataServlet extends HttpServlet {
         for (int i = 0; i < Integer.parseInt(request.getParameter(NUM_COMMENTS_PARAMETER)); i++) {
             if(resultIterator.hasNext()) {
                 Entity commentEntity = (Entity) resultIterator.next();
-                try {
-                    commentEntity = datastore.get(commentEntity.getKey());
-                    String text = (String) commentEntity.getProperty(TEXT_PROPERTY);
-                    long timestamp = (long) commentEntity.getProperty(TIMESTAMP_PROPERTY);
+                String text = (String) commentEntity.getProperty(TEXT_PROPERTY);
+                long timestamp = (long) commentEntity.getProperty(TIMESTAMP_PROPERTY);
                     
-                    Comment comment = new Comment(text, timestamp);
-                    commentsList.add(comment);
-                    System.out.println("Item fetched" + System.currentTimeMillis());
-                } catch (Exception e) {
-                    System.out.println("Entity not found");
-                }
+                Comment comment = new Comment(text, timestamp);
+                commentsList.add(comment);
+                System.out.println("Item fetched" + System.currentTimeMillis());
             }
         }
 

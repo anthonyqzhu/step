@@ -14,7 +14,7 @@
 
 package com.google.sps.data;
 
-/** An comment in the database */
+/** A comment in the database */
 public final class Comment {
 
   private final String text;
