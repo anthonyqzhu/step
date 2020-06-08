@@ -84,9 +84,25 @@ for (i = 0; i < coll.length; i++) {
 }
 
 /** Creates a map and adds it to the page. */
-function createMap() {
+function initMap() {
+  var mich_loc = {lat: 42.278046, lng: -83.738220};
   const map = new google.maps.Map(
-      document.getElementById('map'),
-      {center: {lat: 42.278046, lng: -83.738220}, zoom: 20, mapTypeId: 'hybrid'});
+    document.getElementById('map'),
+    {center: mich_loc, zoom: 18, mapTypeId: 'hybrid'});
   map.setTilt(45);
+  var marker = new google.maps.Marker({
+    position: mich_loc,
+    map: map,
+    draggable: true,
+    animation: google.maps.Animation.DROP
+  });
+  marker.addListener('click', toggleBounce);
+}
+
+function toggleBounce() {
+  if (marker.getAnimation() !== null) {
+    marker.setAnimation(null);
+  } else {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
 }
