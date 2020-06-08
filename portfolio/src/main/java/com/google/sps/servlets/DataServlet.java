@@ -15,12 +15,15 @@
 package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceConfig;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.ReadPolicy;
 import com.google.gson.Gson;
+import com.google.sps.data.Comment;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,21 +48,38 @@ public class DataServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Query query = new Query(COMMENT_KIND).addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        // Construct a read policy for eventual consistency
+        ReadPolicy policy = new ReadPolicy(ReadPolicy.Consistency.STRONG);
+
+        // Set the read policy
+        DatastoreServiceConfig strongConsistentConfig =
+            DatastoreServiceConfig.Builder.withReadPolicy(policy);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService(strongConsistentConfig);
         PreparedQuery results = datastore.prepare(query);
 
         // Create ArrayList of comments and populate from the database
-        ArrayList<String> commentsList = new ArrayList<String>();
+        ArrayList<Comment> commentsList = new ArrayList<Comment>();
         Iterator resultIterator = results.asIterable().iterator();
-        for (int i = 0; i < Integer.parseInt(request.getParameter(NUM_COMMENTS_PARAMETER)); i++) {
-            if(resultIterator.hasNext()) {
-                Entity commentEntity = (Entity) resultIterator.next();
-                commentsList.add((String) commentEntity.getProperty(TEXT_PROPERTY));
+        int numComments = Integer.parseInt(request.getParameter(NUM_COMMENTS_PARAMETER));
+        if(numComments >= 0 ) {
+            for (int i = 0; i < numComments; i++) {
+                if(resultIterator.hasNext()) {
+                    Entity commentEntity = (Entity) resultIterator.next();
+                    String text = (String) commentEntity.getProperty(TEXT_PROPERTY);
+                    long timestamp = (long) commentEntity.getProperty(TIMESTAMP_PROPERTY);
+                        
+                    Comment comment = new Comment(text, timestamp);
+                    commentsList.add(comment);
+                }
             }
+        } else {
+            System.out.println("Invalid number. Please enter a non negative amount");
         }
 
         // Convert comments to json
         String json = convertToJsonUsingGson(commentsList);
+
+        System.out.println(json);
 
         // Set response to comments in json form
         response.setContentType("application/json;");
@@ -74,13 +94,13 @@ public class DataServlet extends HttpServlet {
         long timestamp = System.currentTimeMillis();
 
         // Create entity with comment text and timestamp info
-        Entity taskEntity = new Entity(COMMENT_KIND);
-        taskEntity.setProperty(TEXT_PROPERTY, commentText);
-        taskEntity.setProperty(TIMESTAMP_PROPERTY, timestamp);
+        Entity commentEntity = new Entity(COMMENT_KIND);
+        commentEntity.setProperty(TEXT_PROPERTY, commentText);
+        commentEntity.setProperty(TIMESTAMP_PROPERTY, timestamp);
 
         // Store comment task with datastore instance
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(taskEntity);
+        datastore.put(commentEntity);
 
         // Redirect back to the HTML page.
         response.sendRedirect("/index.html");
@@ -89,7 +109,7 @@ public class DataServlet extends HttpServlet {
     /**
     * Converts an ArrayList instance into a JSON string using the Gson library.
     */
-    private static String convertToJsonUsingGson(ArrayList<String> list) {
+    private static String convertToJsonUsingGson(ArrayList<Comment> list) {
 
         Gson gson = new Gson();
         return gson.toJson(list);
