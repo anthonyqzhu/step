@@ -83,6 +83,8 @@ for (i = 0; i < coll.length; i++) {
     });
 }
 
+var marker
+
 /** Creates a map and adds it to the page. */
 function initMap() {
   var mich_loc = {lat: 42.278046, lng: -83.738220};
@@ -90,10 +92,10 @@ function initMap() {
     document.getElementById('map'),
     {center: mich_loc, zoom: 18, mapTypeId: 'hybrid'});
   map.setTilt(45);
-  var marker = new google.maps.Marker({
+  marker = new google.maps.Marker({
     position: mich_loc,
     map: map,
-    draggable: true,
+    draggable: false,
     animation: google.maps.Animation.DROP
   });
   marker.addListener('click', toggleBounce);
