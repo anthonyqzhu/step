@@ -54,7 +54,7 @@ function deleteComments() {
     console.log("Deleting comments");
     const promise = fetch(new Request('/delete-data', {method: 'POST'}));
     promise.then(() => {
-        addComments();
+        fetchComments();
     });
 }
 
@@ -83,7 +83,18 @@ for (i = 0; i < coll.length; i++) {
     });
 }
 
-var marker
+var markers = [];
+
+var marker;
+
+// Marker information for notable restaurants
+var restaurants = [
+  ['Rich JC', 42.275201, -83.732619],
+  ['Frita Batidos', 42.280368, -83.749291],
+  ['Panda Express', 42.290879, -83.717648],
+  ['Piada', 42.278907, -83.740573],
+  ['Tomukun Korean BBQ', 42.279500, -83.742775]
+];
 
 var icons = {
           michigan: {
@@ -99,16 +110,35 @@ function initMap() {
   var mich_loc = {lat: 42.278046, lng: -83.738220};
   const map = new google.maps.Map(
     document.getElementById('map'),
-    {center: mich_loc, zoom: 18, mapTypeId: 'hybrid'});
+    {center: mich_loc, zoom: 14});
   map.setTilt(45);
   marker = new google.maps.Marker({
     position: mich_loc,
     icon: icons['michigan'].icon,
     map: map,
-    draggable: true,
-    animation: google.maps.Animation.DROP
+    title: "Michigan Campus",
+    draggable: true
   });
   marker.addListener('click', toggleBounce);
+  markers.push(marker);
+
+  for(var i = 0; i < restaurants.length; i++) {
+      var restaurant = restaurants[i];
+      addMarkerWithTimeout(restaurant, i * 200, map);
+  }
+}
+
+function addMarkerWithTimeout(restaurant, timeout, map) {
+    window.setTimeout(function() {
+        console.log("Adding marker")
+        markers.push(new google.maps.Marker({
+            position: {lat: restaurant[1], lng: restaurant[2]},
+            map: map,
+            title: restaurant[0],
+            draggable: true,
+            animation: google.maps.Animation.DROP
+        }));
+    }, timeout);
 }
 
 function toggleBounce() {
@@ -118,3 +148,4 @@ function toggleBounce() {
     marker.setAnimation(google.maps.Animation.BOUNCE);
   }
 }
+
