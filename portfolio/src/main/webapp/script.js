@@ -96,6 +96,26 @@ var restaurants = [
   ['Tomukun Korean BBQ', 42.279500, -83.742775]
 ];
 
+var restaurant_descriptions = [
+    ['Rich JC', "An amazing counter-side Korean restaurant. \
+                Highly recommend the Budae Jigae and the spam fried rice. \
+                Perfect warm spicy food for a cold day."],
+    ['Frita Batidos', "Super rich Cuban food. The burgers (Fritas) \
+                       are cooked perfectly medium rare, the fruit \
+                       smoothies (Batidos) are refreshing and flavorful. \
+                       often considered the best restaurant in town."],
+    ['Panda Express', "A staple of the engineering school, you will find \
+                       many a CS major eating here after lecture. \
+                       It ain't authentic, but it sure tastes good."],
+    ['Piada', "A chipotle style restaurant serving Italian street food. \
+               Very good for a quick bite as there is a student deal on \
+               a pasta dish with drink."],
+    ['Tomukun Korean BBQ', "This restaurant is for when you want to \
+                            splurge and chow down like there's no \
+                            tomorrow. On the pricey side but worth it \
+                            for the incredible flavor."]
+]
+
 var icons = {
           michigan: {
             icon: {
