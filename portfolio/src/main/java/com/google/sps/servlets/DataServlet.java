@@ -62,17 +62,17 @@ public class DataServlet extends HttpServlet {
         Iterator resultIterator = results.asIterable().iterator();
         String numCommentsString = request.getParameter(NUM_COMMENTS_PARAMETER);
         if(numCommentsString == "" || numCommentsString == null) {
-            throw new IOException("No value entered for number of comments to display");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No value entered for number of comments to display");
         } 
 
         int numComments = 0;
         try {
             numComments = Integer.parseInt(numCommentsString);
             if(numComments < 0) {
-                throw new IOException("Negative value entered for number of comments to display");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Negative value entered for number of comments to display");
             }
         } catch(NumberFormatException e) {
-            throw new IOException("Value entered is not an integer");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Value entered is not an integer");
         }
         for (int i = 0; i < numComments; i++) {
             if(resultIterator.hasNext()) {
