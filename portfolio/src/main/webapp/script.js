@@ -85,6 +85,15 @@ for (i = 0; i < coll.length; i++) {
 
 var marker
 
+var icons = {
+          michigan: {
+            icon: {
+                url: '/images/michigan_logo.png',
+                scaledSize: new google.maps.Size(32, 32),
+            }
+          }
+        };
+
 /** Creates a map and adds it to the page. */
 function initMap() {
   var mich_loc = {lat: 42.278046, lng: -83.738220};
@@ -94,8 +103,9 @@ function initMap() {
   map.setTilt(45);
   marker = new google.maps.Marker({
     position: mich_loc,
+    icon: icons['michigan'].icon,
     map: map,
-    draggable: false,
+    draggable: true,
     animation: google.maps.Animation.DROP
   });
   marker.addListener('click', toggleBounce);
