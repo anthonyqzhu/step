@@ -85,7 +85,7 @@ for (i = 0; i < coll.length; i++) {
 
 var markers = [];
 
-var marker;
+var mich_marker;
 
 // Marker information for notable restaurants
 var restaurants = [
@@ -132,40 +132,49 @@ function initMap() {
     document.getElementById('map'),
     {center: mich_loc, zoom: 14});
   map.setTilt(45);
-  marker = new google.maps.Marker({
+  mich_marker = new google.maps.Marker({
     position: mich_loc,
     icon: icons['michigan'].icon,
     map: map,
     title: "Michigan Campus",
     draggable: true
   });
-  marker.addListener('click', toggleBounce);
-  markers.push(marker);
+  mich_marker.addListener('click', toggleBounce);
+  markers.push(mich_marker);
 
   for(var i = 0; i < restaurants.length; i++) {
       var restaurant = restaurants[i];
-      addMarkerWithTimeout(restaurant, i * 200, map);
+      var description = restaurant_descriptions[i][1];
+      addRestaurantMarkerWithTimeout(restaurant, i * 200, map, description);
   }
 }
 
-function addMarkerWithTimeout(restaurant, timeout, map) {
+function addRestaurantMarkerWithTimeout(restaurant, timeout, map, description) {
+    console.log("Adding marker");
     window.setTimeout(function() {
-        console.log("Adding marker")
-        markers.push(new google.maps.Marker({
+        const marker = new google.maps.Marker({
             position: {lat: restaurant[1], lng: restaurant[2]},
             map: map,
             title: restaurant[0],
             draggable: true,
             animation: google.maps.Animation.DROP
-        }));
+        });
+
+        const infoWindow = new google.maps.InfoWindow({content: description});
+        marker.addListener('click', () => {
+        infoWindow.open(map, marker);
+        });
+
+        markers.push(marker);
+
     }, timeout);
 }
 
 function toggleBounce() {
-  if (marker.getAnimation() !== null) {
-    marker.setAnimation(null);
+  if (mich_marker.getAnimation() !== null) {
+    mich_marker.setAnimation(null);
   } else {
-    marker.setAnimation(google.maps.Animation.BOUNCE);
+    mich_marker.setAnimation(google.maps.Animation.BOUNCE);
   }
 }
 
