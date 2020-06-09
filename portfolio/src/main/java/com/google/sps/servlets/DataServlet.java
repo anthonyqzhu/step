@@ -60,20 +60,29 @@ public class DataServlet extends HttpServlet {
         // Create ArrayList of comments and populate from the database
         ArrayList<Comment> commentsList = new ArrayList<Comment>();
         Iterator resultIterator = results.asIterable().iterator();
-        int numComments = Integer.parseInt(request.getParameter(NUM_COMMENTS_PARAMETER));
-        if(numComments >= 0 ) {
-            for (int i = 0; i < numComments; i++) {
-                if(resultIterator.hasNext()) {
-                    Entity commentEntity = (Entity) resultIterator.next();
-                    String text = (String) commentEntity.getProperty(TEXT_PROPERTY);
-                    long timestamp = (long) commentEntity.getProperty(TIMESTAMP_PROPERTY);
-                        
-                    Comment comment = new Comment(text, timestamp);
-                    commentsList.add(comment);
-                }
+        String numCommentsString = request.getParameter(NUM_COMMENTS_PARAMETER);
+        if(numCommentsString == "" || numCommentsString == null) {
+            throw new IOException("No value entered for number of comments to display");
+        } 
+
+        int numComments = 0;
+        try {
+            numComments = Integer.parseInt(numCommentsString);
+            if(numComments < 0) {
+                throw new IOException("Negative value entered for number of comments to display");
             }
-        } else {
-            System.out.println("Invalid number. Please enter a non negative amount");
+        } catch(NumberFormatException e) {
+            throw new IOException("Value entered is not an integer");
+        }
+        for (int i = 0; i < numComments; i++) {
+            if(resultIterator.hasNext()) {
+                Entity commentEntity = (Entity) resultIterator.next();
+                String text = (String) commentEntity.getProperty(TEXT_PROPERTY);
+                long timestamp = (long) commentEntity.getProperty(TIMESTAMP_PROPERTY);
+                    
+                Comment comment = new Comment(text, timestamp);
+                commentsList.add(comment);
+            }
         }
 
         // Convert comments to json
