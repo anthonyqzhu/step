@@ -146,7 +146,6 @@ function initMap() {
     {center: mich_loc, zoom: 14});
   map.setTilt(45);
 
-  var markers = [];
   var mich_marker = new google.maps.Marker({
     position: mich_loc,
     icon: icons['michigan'].icon,
@@ -161,7 +160,6 @@ function initMap() {
         mich_marker.setAnimation(google.maps.Animation.BOUNCE);
     }
   });
-  markers.push(mich_marker);
 
   for(var i = 0; i < restaurants.length; i++) {
       var restaurant = restaurants[i];
@@ -185,8 +183,5 @@ function addRestaurantMarkerWithTimeout(restaurant, timeout, map) {
         marker.addListener('click', () => {
             infoWindow.open(map, marker);
         });
-
-        markers.push(marker);
-
     }, timeout);
 }
