@@ -52,8 +52,7 @@ function fetchComments() {
  */
 function deleteComments() {
     console.log("Deleting comments");
-    const promise = fetch(new Request('/delete-data', {method: 'POST'}));
-    promise.then(() => {
+    promise = fetch(new Request('/delete-data', {method: 'POST'})).then(() => {
         fetchComments();
     });
 }
@@ -83,12 +82,14 @@ for (i = 0; i < coll.length; i++) {
     });
 }
 
+// Array to hold all of the markers used on the map
 var markers = [];
 
-var marker;
+// Holds the marker with mich logo and bounce animation
+var mich_marker;
 
 // Marker information for notable restaurants
-var restaurants = [
+const restaurants = [
   ['Rich JC', 42.275201, -83.732619],
   ['Frita Batidos', 42.280368, -83.749291],
   ['Panda Express', 42.290879, -83.717648],
@@ -105,22 +106,22 @@ var icons = {
           }
         };
 
-/** Creates a map and adds it to the page. */
+/** Creates a map and adds markers with drop animation as well */
 function initMap() {
   var mich_loc = {lat: 42.278046, lng: -83.738220};
   const map = new google.maps.Map(
     document.getElementById('map'),
     {center: mich_loc, zoom: 14});
   map.setTilt(45);
-  marker = new google.maps.Marker({
+  mich_marker = new google.maps.Marker({
     position: mich_loc,
     icon: icons['michigan'].icon,
     map: map,
     title: "Michigan Campus",
     draggable: true
   });
-  marker.addListener('click', toggleBounce);
-  markers.push(marker);
+  mich_marker.addListener('click', toggleBounce);
+  markers.push(mich_marker);
 
   for(var i = 0; i < restaurants.length; i++) {
       var restaurant = restaurants[i];
@@ -128,6 +129,7 @@ function initMap() {
   }
 }
 
+/* Used to add marker to map with delay to create animation */
 function addMarkerWithTimeout(restaurant, timeout, map) {
     window.setTimeout(function() {
         console.log("Adding marker")
@@ -141,11 +143,12 @@ function addMarkerWithTimeout(restaurant, timeout, map) {
     }, timeout);
 }
 
+/* Used to toggle bouncing on mich_marker on click */
 function toggleBounce() {
-  if (marker.getAnimation() !== null) {
-    marker.setAnimation(null);
+  if (mich_marker.getAnimation() !== null) {
+    mich_marker.setAnimation(null);
   } else {
-    marker.setAnimation(google.maps.Animation.BOUNCE);
+    mich_marker.setAnimation(google.maps.Animation.BOUNCE);
   }
 }
 
