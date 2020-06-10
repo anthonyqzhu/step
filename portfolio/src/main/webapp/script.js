@@ -52,8 +52,7 @@ function fetchComments() {
  */
 function deleteComments() {
     console.log("Deleting comments");
-    const promise = fetch(new Request('/delete-data', {method: 'POST'}));
-    promise.then(() => {
+    promise = fetch(new Request('/delete-data', {method: 'POST'})).then(() => {
         fetchComments();
     });
 }
@@ -83,12 +82,14 @@ for (i = 0; i < coll.length; i++) {
     });
 }
 
+// Array to hold all of the markers used on the map
 var markers = [];
 
+// Holds the marker with mich logo and bounce animation
 var mich_marker;
 
 // Marker information for notable restaurants
-var restaurants = [
+const restaurants = [
   ['Rich JC', 42.275201, -83.732619],
   ['Frita Batidos', 42.280368, -83.749291],
   ['Panda Express', 42.290879, -83.717648],
@@ -125,7 +126,7 @@ var icons = {
           }
         };
 
-/** Creates a map and adds it to the page. */
+/** Creates a map and adds markers with drop animation as well */
 function initMap() {
   var mich_loc = {lat: 42.278046, lng: -83.738220};
   const map = new google.maps.Map(
@@ -149,6 +150,7 @@ function initMap() {
   }
 }
 
+/* Used to add marker to map with delay to create animation */
 function addRestaurantMarkerWithTimeout(restaurant, timeout, map, description) {
     console.log("Adding marker");
     window.setTimeout(function() {
@@ -170,6 +172,7 @@ function addRestaurantMarkerWithTimeout(restaurant, timeout, map, description) {
     }, timeout);
 }
 
+/* Used to toggle bouncing on mich_marker on click */
 function toggleBounce() {
   if (mich_marker.getAnimation() !== null) {
     mich_marker.setAnimation(null);
