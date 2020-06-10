@@ -154,7 +154,13 @@ function initMap() {
     title: "Michigan Campus",
     draggable: true
   });
-  mich_marker.addListener('click', toggleBounce(mich_marker));
+  mich_marker.addListener('click', () => {
+    if (mich_marker.getAnimation() !== null) {
+        mich_marker.setAnimation(null);
+    } else {
+        mich_marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+  });
   markers.push(mich_marker);
 
   for(var i = 0; i < restaurants.length; i++) {
@@ -184,13 +190,3 @@ function addRestaurantMarkerWithTimeout(restaurant, timeout, map) {
 
     }, timeout);
 }
-
-/* Used to toggle bouncing on mich_marker on click */
-function toggleBounce(marker) {
-  if (marker.getAnimation() !== null) {
-    marker.setAnimation(null);
-  } else {
-    marker.setAnimation(google.maps.Animation.BOUNCE);
-  }
-}
-
