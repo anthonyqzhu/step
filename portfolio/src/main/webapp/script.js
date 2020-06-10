@@ -186,6 +186,7 @@ function addRestaurantMarkerWithTimeout(restaurant, timeout, map) {
     }, timeout);
 }
 
+/* Enables the comment form with the blobstore image upload URL */
 function fetchBlobstoreUrlAndShowForm() {
   fetch('/blobstore-upload-url')
       .then((response) => {
@@ -196,4 +197,10 @@ function fetchBlobstoreUrlAndShowForm() {
         messageForm.action = imageUploadUrl;
         // messageForm.classList.remove('hidden');
       });
+}
+
+/* Enact the functions need onload */
+function startup() {
+    initMap();
+    fetchBlobstoreUrlAndShowForm();
 }
