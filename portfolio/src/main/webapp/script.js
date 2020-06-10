@@ -186,20 +186,19 @@ function addRestaurantMarkerWithTimeout(restaurant, timeout, map) {
     }, timeout);
 }
 
-/* Enables the comment form with the blobstore image upload URL */
+/* Sets up the comment form with the blobstore image upload URL */
 function fetchBlobstoreUrlAndShowForm() {
-  fetch('/blobstore-upload-url')
+  fetch('/create-image-upload-url')
       .then((response) => {
         return response.text();
-      })
-      .then((imageUploadUrl) => {
-        const messageForm = document.getElementById('comment-form');
-        messageForm.action = imageUploadUrl;
-        // messageForm.classList.remove('hidden');
+      }).then((imageUploadUrl) => {
+        const commentForm = document.getElementById('comment-form');
+        commentForm.action = imageUploadUrl;
+        commentForm.classList.remove('hidden');
       });
 }
 
-/* Enact the functions need onload */
+/* Initializes the page */
 function startup() {
     initMap();
     fetchBlobstoreUrlAndShowForm();

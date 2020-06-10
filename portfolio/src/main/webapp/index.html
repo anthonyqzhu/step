@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>My Portfolio</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzIRQIivYFhDNro2E8WHGnj9uEz0t6kdE&callback=initMap"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzIRQIivYFhDNro2E8WHGnj9uEz0t6kdE"></script>
     <script src="script.js"></script>
   </head>
   <body onload="startup();">
@@ -30,7 +30,7 @@
       <p>Click here to get a random message:</p>
       <button onclick="addRandomQuote()">Click me!</button>
       <div id="quote-container"></div>
-      <form id="comment-form" method="POST" enctype="multipart/form-data">
+      <form id="comment-form" class="hidden" method="POST" enctype="multipart/form-data">
 
       <label>Leave a comment for me:
         <input type="text" name="comment-text">
