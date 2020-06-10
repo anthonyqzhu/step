@@ -52,9 +52,8 @@ function fetchComments() {
  */
 function deleteComments() {
     console.log("Deleting comments");
-    const promise = fetch(new Request('/delete-data', {method: 'POST'}));
-    promise.then(() => {
-        addComments();
+    promise = fetch(new Request('/delete-data', {method: 'POST'})).then(() => {
+        fetchComments();
     });
 }
 
@@ -83,9 +82,73 @@ for (i = 0; i < coll.length; i++) {
     });
 }
 
-/** Creates a map and adds it to the page. */
-function createMap() {
+// Array to hold all of the markers used on the map
+var markers = [];
+
+// Holds the marker with mich logo and bounce animation
+var mich_marker;
+
+// Marker information for notable restaurants
+const restaurants = [
+  ['Rich JC', 42.275201, -83.732619],
+  ['Frita Batidos', 42.280368, -83.749291],
+  ['Panda Express', 42.290879, -83.717648],
+  ['Piada', 42.278907, -83.740573],
+  ['Tomukun Korean BBQ', 42.279500, -83.742775]
+];
+
+var icons = {
+          michigan: {
+            icon: {
+                url: '/images/michigan_logo.png',
+                scaledSize: new google.maps.Size(32, 32),
+            }
+          }
+        };
+
+/** Creates a map and adds markers with drop animation as well */
+function initMap() {
+  var mich_loc = {lat: 42.278046, lng: -83.738220};
   const map = new google.maps.Map(
-      document.getElementById('map'),
-      {center: {lat: 37.422, lng: -122.084}, zoom: 16});
+    document.getElementById('map'),
+    {center: mich_loc, zoom: 14});
+  map.setTilt(45);
+  mich_marker = new google.maps.Marker({
+    position: mich_loc,
+    icon: icons['michigan'].icon,
+    map: map,
+    title: "Michigan Campus",
+    draggable: true
+  });
+  mich_marker.addListener('click', toggleBounce);
+  markers.push(mich_marker);
+
+  for(var i = 0; i < restaurants.length; i++) {
+      var restaurant = restaurants[i];
+      addMarkerWithTimeout(restaurant, i * 200, map);
+  }
 }
+
+/* Used to add marker to map with delay to create animation */
+function addMarkerWithTimeout(restaurant, timeout, map) {
+    window.setTimeout(function() {
+        console.log("Adding marker")
+        markers.push(new google.maps.Marker({
+            position: {lat: restaurant[1], lng: restaurant[2]},
+            map: map,
+            title: restaurant[0],
+            draggable: true,
+            animation: google.maps.Animation.DROP
+        }));
+    }, timeout);
+}
+
+/* Used to toggle bouncing on mich_marker on click */
+function toggleBounce() {
+  if (mich_marker.getAnimation() !== null) {
+    mich_marker.setAnimation(null);
+  } else {
+    mich_marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
+}
+
