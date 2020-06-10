@@ -118,13 +118,13 @@ var restaurant_descriptions = [
 ]
 
 var icons = {
-          michigan: {
-            icon: {
-                url: '/images/michigan_logo.png',
-                scaledSize: new google.maps.Size(32, 32),
-            }
-          }
-        };
+    michigan: {
+        icon: {
+            url: '/images/michigan_logo.png',
+            scaledSize: new google.maps.Size(32, 32),
+        }
+    }
+};
 
 /** Creates a map and adds markers with drop animation as well */
 function initMap() {
