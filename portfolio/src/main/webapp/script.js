@@ -180,7 +180,7 @@ function addRestaurantMarkerWithTimeout(restaurant, timeout, map) {
             draggable: true,
             animation: google.maps.Animation.DROP
         });
-
+      
         const infoWindow = new google.maps.InfoWindow({content: restaurant.description});
         marker.addListener('click', () => {
             infoWindow.open(map, marker);
