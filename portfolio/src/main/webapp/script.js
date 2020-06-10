@@ -12,6 +12,62 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Marker information for notable restaurants
+const restaurants = [
+  {
+      name: 'Rich JC',
+      lat: 42.275201,
+      long: -83.732619,
+      description: "An amazing counter-side Korean restaurant. \
+                Highly recommend the Budae Jigae and the spam fried rice. \
+                Perfect warm spicy food for a cold day."
+  },
+  {
+      name: 'Frita Batidos',
+      lat: 42.280368,
+      long: -83.749291,
+      description: "Super rich Cuban food. The burgers (Fritas) \
+                       are cooked perfectly medium rare, the fruit \
+                       smoothies (Batidos) are refreshing and flavorful. \
+                       often considered the best restaurant in town."
+  },
+  {
+      name: 'Panda Express',
+      lat: 42.290879,
+      long: -83.717648,
+      description: "A staple of the engineering school, you will find \
+                       many a CS major eating here after lecture. \
+                       It ain't authentic, but it sure tastes good."
+  },
+  {
+      name: 'Piada',
+      lat: 42.278907,
+      long: -83.740573,
+      description: "A chipotle style restaurant serving Italian street food. \
+               Very good for a quick bite as there is a student deal on \
+               a pasta dish with drink."
+  },
+  {
+      name: 'Tomukun Korean BBQ',
+      lat: 42.279500,
+      long: -83.742775,
+      description:"This restaurant is for when you want to \
+                            splurge and chow down like there's no \
+                            tomorrow. On the pricey side but worth it \
+                            for the incredible flavor."
+  }
+];
+
+// Holds custom icons for map
+var icons = {
+    michigan: {
+        icon: {
+            url: '/images/michigan_logo.png',
+            scaledSize: new google.maps.Size(32, 32),
+        }
+    }
+};
+
 /** 
  * Adds a random quote to the page.
  */
@@ -82,50 +138,6 @@ for (i = 0; i < coll.length; i++) {
     });
 }
 
-// Array to hold all of the markers used on the map
-var markers = [];
-
-// Holds the marker with mich logo and bounce animation
-var mich_marker;
-
-// Marker information for notable restaurants
-const restaurants = [
-  ['Rich JC', 42.275201, -83.732619],
-  ['Frita Batidos', 42.280368, -83.749291],
-  ['Panda Express', 42.290879, -83.717648],
-  ['Piada', 42.278907, -83.740573],
-  ['Tomukun Korean BBQ', 42.279500, -83.742775]
-];
-
-var restaurant_descriptions = [
-    ['Rich JC', "An amazing counter-side Korean restaurant. \
-                Highly recommend the Budae Jigae and the spam fried rice. \
-                Perfect warm spicy food for a cold day."],
-    ['Frita Batidos', "Super rich Cuban food. The burgers (Fritas) \
-                       are cooked perfectly medium rare, the fruit \
-                       smoothies (Batidos) are refreshing and flavorful. \
-                       often considered the best restaurant in town."],
-    ['Panda Express', "A staple of the engineering school, you will find \
-                       many a CS major eating here after lecture. \
-                       It ain't authentic, but it sure tastes good."],
-    ['Piada', "A chipotle style restaurant serving Italian street food. \
-               Very good for a quick bite as there is a student deal on \
-               a pasta dish with drink."],
-    ['Tomukun Korean BBQ', "This restaurant is for when you want to \
-                            splurge and chow down like there's no \
-                            tomorrow. On the pricey side but worth it \
-                            for the incredible flavor."]
-]
-
-var icons = {
-    michigan: {
-        icon: {
-            url: '/images/michigan_logo.png',
-            scaledSize: new google.maps.Size(32, 32),
-        }
-    }
-};
-
 /** Creates a map and adds markers with drop animation as well */
 function initMap() {
   var mich_loc = {lat: 42.278046, lng: -83.738220};
@@ -133,38 +145,39 @@ function initMap() {
     document.getElementById('map'),
     {center: mich_loc, zoom: 14});
   map.setTilt(45);
-  mich_marker = new google.maps.Marker({
+
+  var markers = [];
+  var mich_marker = new google.maps.Marker({
     position: mich_loc,
     icon: icons['michigan'].icon,
     map: map,
     title: "Michigan Campus",
     draggable: true
   });
-  mich_marker.addListener('click', toggleBounce);
+  mich_marker.addListener('click', toggleBounce(mich_marker));
   markers.push(mich_marker);
 
   for(var i = 0; i < restaurants.length; i++) {
       var restaurant = restaurants[i];
-      var description = restaurant_descriptions[i][1];
-      addRestaurantMarkerWithTimeout(restaurant, i * 200, map, description);
+      addRestaurantMarkerWithTimeout(restaurant, i * 200, map);
   }
 }
 
 /* Used to add marker to map with delay to create animation */
-function addRestaurantMarkerWithTimeout(restaurant, timeout, map, description) {
+function addRestaurantMarkerWithTimeout(restaurant, timeout, map) {
     console.log("Adding marker");
     window.setTimeout(function() {
         const marker = new google.maps.Marker({
-            position: {lat: restaurant[1], lng: restaurant[2]},
+            position: {lat: restaurant.lat, lng: restaurant.long},
             map: map,
-            title: restaurant[0],
+            title: restaurant.name,
             draggable: true,
             animation: google.maps.Animation.DROP
         });
 
-        const infoWindow = new google.maps.InfoWindow({content: description});
+        const infoWindow = new google.maps.InfoWindow({content: restaurant.description});
         marker.addListener('click', () => {
-        infoWindow.open(map, marker);
+            infoWindow.open(map, marker);
         });
 
         markers.push(marker);
@@ -173,11 +186,11 @@ function addRestaurantMarkerWithTimeout(restaurant, timeout, map, description) {
 }
 
 /* Used to toggle bouncing on mich_marker on click */
-function toggleBounce() {
-  if (mich_marker.getAnimation() !== null) {
-    mich_marker.setAnimation(null);
+function toggleBounce(marker) {
+  if (marker.getAnimation() !== null) {
+    marker.setAnimation(null);
   } else {
-    mich_marker.setAnimation(google.maps.Animation.BOUNCE);
+    marker.setAnimation(google.maps.Animation.BOUNCE);
   }
 }
 
