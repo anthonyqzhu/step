@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>My Portfolio</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzIRQIivYFhDNro2E8WHGnj9uEz0t6kdE&callback=initMap"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzIRQIivYFhDNro2E8WHGnj9uEz0t6kdE"></script>
     <script src="script.js"></script>
   </head>
-  <body onload="initMap();">
+  <body onload="startup();">
     <div id="content">
       <div class="header">
       <h1>Anthony Zhu</h1>
@@ -30,13 +30,17 @@
       <p>Click here to get a random message:</p>
       <button onclick="addRandomQuote()">Click me!</button>
       <div id="quote-container"></div>
-      <form action="/data" method="POST">
+      <form id="comment-form" class="hidden" method="POST" enctype="multipart/form-data">
 
       <label>Leave a comment for me:
         <input type="text" name="comment-text">
       </label>
       <br/><br/>
 
+      <label>Upload an image:</p>
+        <input type="file" name="image">
+      </label>
+      <br/>
       <input type="submit" />
       </form>
       <br/>
