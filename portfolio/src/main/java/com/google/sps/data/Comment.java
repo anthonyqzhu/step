@@ -19,9 +19,11 @@ public final class Comment {
 
   private final String text;
   private final long timestamp;
+  private final String imageURL;
 
-  public Comment(String text, long timestamp) {
+  public Comment(String text, long timestamp, String imageURL) {
     this.text = text;
     this.timestamp = timestamp;
+    this.imageURL = imageURL;
   }
 }
