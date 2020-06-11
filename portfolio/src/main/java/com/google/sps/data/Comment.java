@@ -19,7 +19,7 @@ public final class Comment {
 
   private final String text;
   private final long timestamp;
-  private String imageURL;
+  private final String imageURL;
 
   public Comment(String text, long timestamp, String imageURL) {
     this.text = text;

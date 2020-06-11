@@ -19,9 +19,6 @@ import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceConfig;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -30,6 +27,9 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.ReadPolicy;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import java.io.IOException;
@@ -56,6 +56,7 @@ public class DataServlet extends HttpServlet {
   private static final String TIMESTAMP_PROPERTY = "timestamp";
   private static final String IMAGE_URL_PROPERTY = "image_url";
   private static final String NUM_COMMENTS_PARAMETER = "num_comments";
+  private static final String IMAGE_ELEMENT_NAME = "image";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -118,8 +119,7 @@ public class DataServlet extends HttpServlet {
         // Get the input from the form and log time of comment
         String commentText = request.getParameter(COMMENT_FORM_PARAMETER);
         long timestamp = System.currentTimeMillis();
-        String imageURL = getUploadedFileUrl(request, "image");
-        System.out.println(imageURL);
+        String imageURL = getUploadedFileUrl(request);
 
         // Create entity with comment text and timestamp info
         Entity commentEntity = new Entity(COMMENT_KIND);
@@ -145,10 +145,10 @@ public class DataServlet extends HttpServlet {
     }
 
     /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
-    private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
+    private String getUploadedFileUrl(HttpServletRequest request) {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
-        List<BlobKey> blobKeys = blobs.get(formInputElementName);
+        List<BlobKey> blobKeys = blobs.get(IMAGE_ELEMENT_NAME);
 
         // User submitted form without selecting a file, so we can't get a URL. (dev server)
         if (blobKeys == null || blobKeys.isEmpty()) {
