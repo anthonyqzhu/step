@@ -99,7 +99,7 @@ function fetchComments() {
         for (i = 0; i < comments.length; i++) {
             commentsListElement.appendChild(
                 createListTextElement(comments[i].text));
-            if(comments[i].imageURL != null) {
+            if(comments[i].imageURL !== null) {
                 commentsListElement.appendChild(
                   createListImageElement(comments[i].imageURL));
             }
@@ -127,7 +127,11 @@ function createListTextElement(text) {
 /** Creates an <li> element containing an image. */
 function createListImageElement(imageURL) {
     const liElement = document.createElement('li');
-    liElement.innerHTML = '<img src="' + imageURL + '" class="list-image">';
+    const imgElement = document.createElement('img');
+    imgElement.setAttribute('src', imageURL);
+    imgElement.setAttribute('width', '200px');
+    imgElement.setAttribute('height', '200px');
+    liElement.appendChild(imgElement);
     return liElement;
 }
 
