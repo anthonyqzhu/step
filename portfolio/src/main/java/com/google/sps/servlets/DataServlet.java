@@ -78,6 +78,7 @@ public class DataServlet extends HttpServlet {
         if(numCommentsString == "" || numCommentsString == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
               "No value entered for number of comments to display");
+              return;
         } 
 
         int numComments = 0;
@@ -86,10 +87,12 @@ public class DataServlet extends HttpServlet {
             if(numComments < 0) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST,
                   "Negative value entered for number of comments to display");
+                return;
             }
         } catch(NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
               "Value entered is not an integer");
+            return;
         }
         for (int i = 0; i < numComments; i++) {
             if(resultIterator.hasNext()) {
@@ -124,6 +127,7 @@ public class DataServlet extends HttpServlet {
         } catch(IOException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
               e.toString());
+            return;
         }
     
         // Create entity with comment text and timestamp info
