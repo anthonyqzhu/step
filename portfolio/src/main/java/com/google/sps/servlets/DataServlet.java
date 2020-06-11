@@ -95,8 +95,9 @@ public class DataServlet extends HttpServlet {
                 Entity commentEntity = (Entity) resultIterator.next();
                 String text = (String) commentEntity.getProperty(TEXT_PROPERTY);
                 long timestamp = (long) commentEntity.getProperty(TIMESTAMP_PROPERTY);
+                String imageURL = (String) commentEntity.getProperty(IMAGE_URL_PROPERTY);
                     
-                Comment comment = new Comment(text, timestamp);
+                Comment comment = new Comment(text, timestamp, imageURL);
                 commentsList.add(comment);
             }
         }
