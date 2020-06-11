@@ -119,8 +119,13 @@ public class DataServlet extends HttpServlet {
         // Get the input from the form and log time of comment
         String commentText = request.getParameter(COMMENT_FORM_PARAMETER);
         long timestamp = System.currentTimeMillis();
-        String imageURL = getUploadedFileUrl(request);
-
+        try {
+            String imageURL = getUploadedFileUrl(request);
+        } catch(IOException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+              e.toString());
+        }
+    
         // Create entity with comment text and timestamp info
         Entity commentEntity = new Entity(COMMENT_KIND);
         commentEntity.setProperty(TEXT_PROPERTY, commentText);
@@ -145,7 +150,7 @@ public class DataServlet extends HttpServlet {
     }
 
     /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
-    private String getUploadedFileUrl(HttpServletRequest request) {
+    private String getUploadedFileUrl(HttpServletRequest request) throws IOException {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
         List<BlobKey> blobKeys = blobs.get(IMAGE_ELEMENT_NAME);
@@ -156,6 +161,9 @@ public class DataServlet extends HttpServlet {
         }
 
         // Our form only contains a single file input, so get the first index.
+        if(blobKeys.size() > 1) {
+            throw new IOException("Too many file inputs");
+        }
         BlobKey blobKey = blobKeys.get(0);
 
         // User submitted form without selecting a file, so we can't get a URL. (live server)
