@@ -98,7 +98,11 @@ function fetchComments() {
         var i;
         for (i = 0; i < comments.length; i++) {
             commentsListElement.appendChild(
-                createListElement(comments[i].text));
+                createListTextElement(comments[i].text));
+            if(comments[i].imageURL != null) {
+                commentsListElement.appendChild(
+                  createListImageElement(comments[i].imageURL));
+            }
         }
     });
 }
@@ -114,10 +118,17 @@ function deleteComments() {
 }
 
 /** Creates an <li> element containing text. */
-function createListElement(text) {
-  const liElement = document.createElement('li');
-  liElement.innerText = text;
-  return liElement;
+function createListTextElement(text) {
+    const liElement = document.createElement('li');
+    liElement.innerText = text;
+    return liElement;
+}
+
+/** Creates an <li> element containing an image. */
+function createListImageElement(imageURL) {
+    const liElement = document.createElement('li');
+    liElement.innerHTML = '<img src="' + imageURL + '" class="list-image">';
+    return liElement;
 }
 
 /**
