@@ -129,8 +129,7 @@ function createListImageElement(imageURL) {
     const liElement = document.createElement('li');
     const imgElement = document.createElement('img');
     imgElement.setAttribute('src', imageURL);
-    imgElement.setAttribute('width', '200px');
-    imgElement.setAttribute('height', '200px');
+    imgElement.setAttribute('class', 'list-image');
     liElement.appendChild(imgElement);
     return liElement;
 }
