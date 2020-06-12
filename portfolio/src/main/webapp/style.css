@@ -159,3 +159,8 @@ div.desc {
 .hidden {
   display: none;
 }
+
+.list-image {
+  height: 200px;
+  width: 200px;;
+}
