@@ -17,6 +17,7 @@ package com.google.sps;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 public final class FindMeetingQuery {
 
@@ -43,12 +44,10 @@ public final class FindMeetingQuery {
         return possibleTimes;
     }
 
-    // Only update times for events that have attendees from the meeting request
+    // update possible meeting times based on existing events that have attendees from the request
     for (Event event : events) {
-        for (String attendee : request.getAttendees()) {
-            if (event.getAttendees().contains(attendee)) {
-                updatePossibleTimes(possibleTimes, event.getWhen(), request.getDuration());
-            }
+        if (!Collections.disjoint(event.getAttendees(), request.getAttendees())) {
+            updatePossibleTimes(possibleTimes, event.getWhen(), request.getDuration());
         }
     }
 
@@ -57,15 +56,19 @@ public final class FindMeetingQuery {
 
   /** 
    * Update possible meeting times by excluding time ranges of an event
+   *
+   * For example, if possibleTimes={[12am,1am],[3am, 4am]}, eventTime=[3.30-4.30am], requestDuration=60min,
+   * then possibleTimes={[12am,1am]} after the function executes.
    */
   private void updatePossibleTimes(Collection<TimeRange> possibleTimes, TimeRange eventTime, long requestDuration) {
     Collection<TimeRange> rangesToModify = new ArrayList<TimeRange>();
 
     // Check for time ranges that contain the event in question
     for (TimeRange timeSlot : possibleTimes) {
-        if (timeSlot.contains(eventTime.start()) || timeSlot.contains(eventTime.end())) {
+        if (timeSlot.contains(eventTime.start()) || timeSlot.contains(eventTime.end()) || eventTime.contains(timeSlot)) {
             rangesToModify.add(timeSlot);
         }
+
     }
 
     splitTimeRanges(possibleTimes, rangesToModify, eventTime);
@@ -75,6 +78,10 @@ public final class FindMeetingQuery {
 
   /** 
    * For ranges that overlap the event, remove the invalid parts from the range
+   *
+   * For example, if eventTime = [530-600] and timeSlot = [545-615], adds [600-615]
+   * to possible times and remove timeSlot. If eventTime = [545-615] and timeSlot = [530-600],
+   * then timeSlot would be removed and [530-545] would be added.
    */
   private void splitTimeRanges(Collection<TimeRange> possibleTimes, Collection<TimeRange> rangesToModify, TimeRange eventTime) {
     for (TimeRange timeSlot : rangesToModify) {
