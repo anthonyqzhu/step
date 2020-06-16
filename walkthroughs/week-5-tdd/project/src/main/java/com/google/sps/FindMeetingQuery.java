@@ -47,7 +47,7 @@ public final class FindMeetingQuery {
     // update possible meeting times based on existing events that have attendees from the request
     for (Event event : events) {
         if (!Collections.disjoint(event.getAttendees(), request.getAttendees())) {
-            possibleTimes = updatePossibleTimes(possibleTimes, event.getWhen(), request.getDuration());
+            updatePossibleTimes(possibleTimes, event.getWhen(), request.getDuration());
         }
     }
 
@@ -58,36 +58,56 @@ public final class FindMeetingQuery {
    * Update possible meeting times by excluding time ranges of an event
    *
    * For example, if possibleTimes={[12am,1am],[3am, 4am]}, eventTime=[3.30-4.30am], requestDuration=60min,
-   * then {[12am,1am]} is returned after the function executes.
+   * then possibleTimes={[12am,1am]} after the function executes.
    */
-  private Collection<TimeRange> updatePossibleTimes(Collection<TimeRange> possibleTimes, TimeRange eventTime, long requestDuration) {
-    Collection<TimeRange> newTimes = new ArrayList<TimeRange>();
+  private void updatePossibleTimes(Collection<TimeRange> possibleTimes, TimeRange eventTime, long requestDuration) {
+    Collection<TimeRange> rangesToModify = new ArrayList<TimeRange>();
 
     // Check for time ranges that contain the event in question
     for (TimeRange timeSlot : possibleTimes) {
         if (timeSlot.contains(eventTime.start()) || timeSlot.contains(eventTime.end()) || eventTime.contains(timeSlot)) {
-            if (timeSlot.contains(eventTime.start())) {
-                TimeRange toAdd = TimeRange.fromStartEnd(timeSlot.start(), eventTime.start(), false);
-                // Only add new time slots that are long enough to meet the request
-                if (toAdd.duration() >= requestDuration) {
-                    newTimes.add(toAdd);
-                }
-            }
-
-            if (timeSlot.contains(eventTime.end())) {
-                TimeRange toAdd = TimeRange.fromStartEnd(eventTime.end(), timeSlot.end(), false);
-                // Only add new time slots that are long enough to meet the request
-                if (toAdd.duration() >= requestDuration) {
-                    newTimes.add(toAdd);
-                }
-            }
-        } else {
-            newTimes.add(timeSlot);
+            rangesToModify.add(timeSlot);
         }
 
     }
 
-    return newTimes;
+    splitTimeRanges(possibleTimes, rangesToModify, eventTime);
+    removeInsufficientSlots(possibleTimes, requestDuration);
 
+  }
+
+  /** 
+   * For ranges that overlap the event, remove the invalid parts from the range
+   *
+   * For example, if eventTime = [530-600] and timeSlot = [545-615], adds [600-615]
+   * to possible times and remove timeSlot. If eventTime = [545-615] and timeSlot = [530-600],
+   * then timeSlot would be removed and [530-545] would be added.
+   */
+  private void splitTimeRanges(Collection<TimeRange> possibleTimes, Collection<TimeRange> rangesToModify, TimeRange eventTime) {
+    for (TimeRange timeSlot : rangesToModify) {
+        if (timeSlot.contains(eventTime.start())) {
+            possibleTimes.add(TimeRange.fromStartEnd(timeSlot.start(), eventTime.start(), false));
+        }
+
+        if (timeSlot.contains(eventTime.end())) {
+            possibleTimes.add(TimeRange.fromStartEnd(eventTime.end(), timeSlot.end(), false));
+        }
+
+        possibleTimes.remove(timeSlot);
+    }
+  }
+
+  /** 
+   * Remove possible meeting times that are not long enough for the requested meeting
+   */
+  private void removeInsufficientSlots(Collection<TimeRange> possibleTimes, long requestDuration) {
+      Collection<TimeRange> rangesToRemove = new ArrayList<TimeRange>();
+      for (TimeRange range : possibleTimes) {
+          if (range.duration() < requestDuration) {
+              rangesToRemove.add(range);
+          }
+      }
+
+      possibleTimes.removeAll(rangesToRemove);
   }
 }
