@@ -19,13 +19,24 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public final class FindMeetingQuery {
+
+  /**
+   * This function returns a list of potential time ranges for a meeting 
+   * during the day. The request contains the attendees and the duration
+   * of the meeting, and events contains the other events that are 
+   * scheduled already. If an attendee of the meeting request is an
+   * attendee of another event, the times that the other event covers
+   * are no longer possible for the meeting.
+   */
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     Collection<TimeRange> possibleTimes = new ArrayList<TimeRange>();
     
+    // If the request is over a day, then there are no time slots available
     if (request.getDuration() > TimeRange.WHOLE_DAY.duration()) {
         return possibleTimes;
     }
 
+    // Start with the whole day available
     possibleTimes.add(TimeRange.WHOLE_DAY);
 
     if (request.getAttendees().size() == 0) {
@@ -49,6 +60,8 @@ public final class FindMeetingQuery {
    */
   private void updatePossibleTimes(Collection<TimeRange> possibleTimes, TimeRange eventTime, long requestDuration) {
     Collection<TimeRange> rangesToModify = new ArrayList<TimeRange>();
+
+    // Check for time ranges that contain the event in question
     for (TimeRange timeSlot : possibleTimes) {
         if (timeSlot.contains(eventTime.start()) || timeSlot.contains(eventTime.end())) {
             rangesToModify.add(timeSlot);
