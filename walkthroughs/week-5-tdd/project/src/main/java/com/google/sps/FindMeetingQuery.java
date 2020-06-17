@@ -47,7 +47,7 @@ public final class FindMeetingQuery {
     // update possible meeting times based on existing events that have attendees from the request
     for (Event event : events) {
         if (!Collections.disjoint(event.getAttendees(), request.getAttendees())) {
-            possibleTimes = updatePossibleTimes(possibleTimes, event.getWhen(), request.getDuration());
+            possibleTimes = getNewPossibleTimes(possibleTimes, event.getWhen(), request.getDuration());
         }
     }
 
@@ -60,12 +60,12 @@ public final class FindMeetingQuery {
    * For example, if possibleTimes={[12am,1am],[3am, 4am]}, eventTime=[3.30-4.30am], requestDuration=60min,
    * then {[12am,1am]} is returned after the function executes.
    */
-  private Collection<TimeRange> updatePossibleTimes(Collection<TimeRange> possibleTimes, TimeRange eventTime, long requestDuration) {
+  private Collection<TimeRange> getNewPossibleTimes(Collection<TimeRange> possibleTimes, TimeRange eventTime, long requestDuration) {
     Collection<TimeRange> newTimes = new ArrayList<TimeRange>();
 
     // Check for time ranges that contain the event in question
     for (TimeRange timeSlot : possibleTimes) {
-        if (timeSlot.contains(eventTime.start()) || timeSlot.contains(eventTime.end()) || eventTime.contains(timeSlot)) {
+        if (timeSlot.overlaps(eventTime)) {
             if (timeSlot.contains(eventTime.start())) {
                 TimeRange toAdd = TimeRange.fromStartEnd(timeSlot.start(), eventTime.start(), false);
                 // Only add new time slots that are long enough to meet the request
